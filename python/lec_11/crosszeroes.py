@@ -1,40 +1,39 @@
-import pygame
 from enum import Enum
+import pygame
 
 
-FPS = 60
-CELL_SIZE = 50
+CELL_SIZE = 20
 
 
 class Cell(Enum):
-    VOID = 0
+    CLEAR = 0
     CROSS = 1
     ZERO = 2
 
 
 class Player:
-    """
-    Класс игрока, содержащий тип значков и имя.
-    """
+    '''
+
+    Class of player. Contain type of Marks and Name
+    '''
     def __init__(self, name, cell_type):
         self.name = name
         self.cell_type = cell_type
 
 
 class GameField:
-    def __init__(self):
-        self.height = 3
-        self.width = 3
-        self.cells = [[Cell.VOID]*self.width for i in range(self.height)]
+    '''
+
+    '''
+    pass
 
 
 class GameFieldView:
-    """
-    Виджет игрового поля, который отображает его на экране, а также выясняет место клика.
-    """
+    '''
+    widget shows
+    '''
     def __init__(self, field):
-        # загрузить картинки значков клеток...
-        # отобразить первичное состояние поля
+        # load pics
         self._field = field
         self._height = field.height * CELL_SIZE
         self._width = field.width * CELL_SIZE
@@ -43,70 +42,54 @@ class GameFieldView:
         pass
 
     def check_coords_correct(self, x, y):
-        return True  # TODO: self._height учесть
+        return True
 
     def get_coords(self, x, y):
-        return 0, 0  # TODO: реально вычислить клетку клика
-
-
-class GameRoundManager:
-    """
-    Менеджер игры, запускающий все процессы.
-    """
-
-    def __init__(self, player1: Player, player2: Player):
-        self._players = [player1, player2]
-        self._current_player = 0
-        self.field = GameField()
-
-    def handle_click(self, i, j):
-        player = self._players[self._current_player]
-        # игрок делает клик на поле
-        print("click_handled",  i, j)
+        return (0, 0)
 
 
 class GameWindow:
-    """
-    Содержит виджет поля,
-    а также менеджера игрового раунда.
-    """
+    '''
+    Contain widget of field and managing a game round
+    '''
     def __init__(self):
-        # инициализация pygame
+        # initialize pygame
         pygame.init()
-
-        self._width = 800
-        self._height = 600
-        self._title = "Crosses & Zeroes"
-        self._screen = pygame.display.set_mode((self._width, self._height))
+        self._height = 800
+        self._width = 600
+        self._title = 'my game'
+        self._screen = pygame.display.set_mode(self._width, self._height)
         pygame.display.set_caption(self._title)
 
-        player1 = Player("Петя", Cell.CROSS)
-        player2 = Player("Вася", Cell.ZERO)
-        self._game_manager = GameRoundManager(player1, player2)
-        self._field_widget = GameFieldView(self._game_manager.field)
+        self._field_widget = GameFieldView()
+        player1 = Player('Petr', Cell.CROSS)
+        player2 = Player('Vanya', Cell.ZERO)
+        self._game_manager = GameRoundManager()
 
     def main_loop(self):
         finished = False
-        clock = pygame.time.Clock()
         while not finished:
-            for event in pygame.event.get():
+            for event in pygame.get_events(...):
                 if event.type == pygame.QUIT:
                     finished = True
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    mouse_pos = pygame.mouse.get_pos()
-                    x, y = mouse_pos
+                    x, y = event.x, event.y
                     if self._field_widget.check_coords_correct(x, y):
                         i, j = self._field_widget.get_coords(x, y)
                         self._game_manager.handle_click(i, j)
-            pygame.display.flip()
-            clock.tick(FPS)
 
+class GameRoundManager:
+    '''
 
-def main():
-    window = GameWindow()
-    window.main_loop()
-    print('Game over!')
+    Manager that switch on all actions in game
+    '''
+    def __init__(self, player1: Player, player2: Player):
+        self._players = [player1, player2]
+        self.current_player = 0
+        self._field = GameField()
 
+    def handle_click(self):
+        player = self._players[self._current_player]
+        # player makes click on the field
+        pass
 
-if __name__ == "__main__":
-    main()
